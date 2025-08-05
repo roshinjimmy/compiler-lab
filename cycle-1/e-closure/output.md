@@ -1,15 +1,23 @@
-Enter the number of states in the NFA: 4
-Enter epsilon transitions (ε) for each state:
-Number of ε-transitions from q0: 2
-Enter state 1: 1
-Enter state 2: 2
-Number of ε-transitions from q1: 1
-Enter state 1: 3
-Number of ε-transitions from q2: 0
-Number of ε-transitions from q3: 0
+Enter the number of alphabets: 2
+NOTE:- [Use letter 'e' as epsilon]
+NOTE:- [e must be the last character if it is present]
 
-Epsilon-closures of states:
-ε-closure(q0): {q0 q1 q2 q3 }
-ε-closure(q1): {q1 q3 }
-ε-closure(q2): {q2 }
-ε-closure(q3): {q3 }
+Enter alphabets:
+0 
+e
+
+Enter the number of states: 3
+Enter number of transitions: 3
+NOTE:- [Transition format: state1 alphabet state2]
+NOTE:- [State numbers must be >= 1]
+
+Enter transitions:
+1 e 2
+2 e 3
+2 0 1
+
+E-closures of states:
+----------------------
+e-closure(q1): {q1, q2, q3}
+e-closure(q2): {q2, q3}
+e-closure(q3): {q3}
