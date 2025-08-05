@@ -119,12 +119,19 @@ void subset_construction()
     init_count = closurecount[start];
     sort_state_list(initial, init_count);
 
-    memcpy(dfastate[0], initial, sizeof(int) * init_count);
-    dfastatecount[0] = init_count;
+    int unique_init[MAX], unique_init_count = 0;
+    for (int i = 0; i < init_count; i++)
+    {
+        if (i == 0 || initial[i] != initial[i - 1])
+            unique_init[unique_init_count++] = initial[i];
+    }
+
+    memcpy(dfastate[0], unique_init, sizeof(int) * unique_init_count);
+    dfastatecount[0] = unique_init_count;
     dfa_state_total = 1;
 
-    memcpy(queue[rear], initial, sizeof(int) * init_count);
-    queuecount[rear] = init_count;
+    memcpy(queue[rear], unique_init, sizeof(int) * unique_init_count);
+    queuecount[rear] = unique_init_count;
     rear++;
 
     while (front < rear)
@@ -134,7 +141,7 @@ void subset_construction()
         int curr_index = get_dfa_state_index(curr, currcount);
         front++;
 
-        for (int a = 0; a < n_alpha - 1; a++)
+        for (int a = 0; a < n_alpha; a++)
         {
             int move[MAX], move_count = 0;
             for (int i = 0; i < currcount; i++)
@@ -164,13 +171,20 @@ void subset_construction()
             }
 
             sort_state_list(move, move_count);
-            int idx = get_dfa_state_index(move, move_count);
-            if (idx == -1 && move_count > 0)
+            int unique_move[MAX], unique_move_count = 0;
+            for (int i = 0; i < move_count; i++)
             {
-                memcpy(dfastate[dfa_state_total], move, sizeof(int) * move_count);
-                dfastatecount[dfa_state_total] = move_count;
-                memcpy(queue[rear], move, sizeof(int) * move_count);
-                queuecount[rear] = move_count;
+                if (i == 0 || move[i] != move[i - 1])
+                    unique_move[unique_move_count++] = move[i];
+            }
+
+            int idx = get_dfa_state_index(unique_move, unique_move_count);
+            if (idx == -1 && unique_move_count > 0)
+            {
+                memcpy(dfastate[dfa_state_total], unique_move, sizeof(int) * unique_move_count);
+                dfastatecount[dfa_state_total] = unique_move_count;
+                memcpy(queue[rear], unique_move, sizeof(int) * unique_move_count);
+                queuecount[rear] = unique_move_count;
                 idx = dfa_state_total;
                 dfa_state_total++;
                 rear++;
@@ -185,12 +199,26 @@ void print_dfa()
 {
     printf("\nDFA Transition Table:\n");
     printf("---------------------\n\t");
-    for (int i = 0; i < n_alpha - 1; i++)
+    for (int i = 0; i < n_alpha; i++)
         printf("%c\t", input[i]);
     printf("\n");
 
     for (int i = 0; i < dfa_state_total; i++)
     {
+
+        int is_final = 0;
+        for (int j = 0; j < dfastatecount[i]; j++)
+        {
+            if (is_final_state(dfastate[i][j]))
+            {
+                is_final = 1;
+                break;
+            }
+        }
+        if (is_final)
+            printf("*");
+        else
+            printf(" ");
         printf("{");
         for (int j = 0; j < dfastatecount[i]; j++)
         {
@@ -199,7 +227,7 @@ void print_dfa()
                 printf(" ");
         }
         printf("}\t");
-        for (int k = 0; k < n_alpha - 1; k++)
+        for (int k = 0; k < n_alpha; k++)
         {
             int to = dfa[i][k];
             if (to == -1)

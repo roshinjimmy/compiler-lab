@@ -1,6 +1,7 @@
 Enter number of alphabets: 2
 Enter the alphabets (e for epsilon, should be last):
-a b 
+a
+b
 Enter number of states: 3
 Enter number of transitions: 5
 Enter transitions (from symbol to):
@@ -15,6 +16,7 @@ Enter final states: 1
 
 DFA Transition Table:
 ---------------------
-        a
-{q0}    {q1 q2}
-{q1 q2} {q1 q2}
+        a       b
+ {q0}   {q1 q2} -
+*{q1 q2}        {q1 q2} {q2}
+ {q2}   {q1 q2} {q2}
