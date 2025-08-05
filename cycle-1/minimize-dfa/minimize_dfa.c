@@ -1,213 +1,280 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#define MAX_STATES 20
-#define MAX_SYMBOLS 10
+#define MAX 20
 
-int dfa[MAX_STATES][MAX_SYMBOLS];
-int minimizedDFA[MAX_STATES][MAX_SYMBOLS];
-int n_states, n_symbols;
-int final_states[MAX_STATES], n_final;
-char symbols[MAX_SYMBOLS];
-
-int partitions[MAX_STATES], new_partitions[MAX_STATES];
-int group[MAX_STATES][MAX_STATES];
-int group_size[MAX_STATES];
-int num_groups = 0;
-
-int are_distinguishable(int s1, int s2)
+int findalpha(char inp, int a, char alphabet[a])
 {
-    for (int i = 0; i < n_symbols; i++)
+    for (int i = 0; i < a; i++)
     {
-        int t1 = dfa[s1][i];
-        int t2 = dfa[s2][i];
-        if (partitions[t1] != partitions[t2])
-            return 1;
+        if (alphabet[i] == inp)
+        {
+            return i;
+        }
     }
+    return -1;
+}
+
+int findStateIndex(char ch, int n, char states[n])
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (states[i] == ch)
+            return i;
+    }
+    return -1;
+}
+
+void reset(int n, int table[n][n])
+{
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            table[i][j] = 0;
+}
+
+int isFinal(int i, int f, int final[f])
+{
+    for (int j = 0; j < f; j++)
+        if (final[j] == i)
+            return 1;
     return 0;
 }
 
-void initialize_partitions()
+void printTable(int n, int table[n][n])
 {
-    for (int i = 0; i < n_states; i++)
+    for (int i = 0; i < n; i++)
     {
-        partitions[i] = 1;
-        for (int j = 0; j < n_final; j++)
-        {
-            if (i == final_states[j])
-            {
-                partitions[i] = 0;
-                break;
-            }
-        }
+        for (int j = 0; j < n; j++)
+            printf("%d ", table[i][j]);
+        printf("\n");
     }
 }
 
-void refine_partitions()
+void merge(int n, int empty[n][n], int i, int j)
 {
-    int changed;
-    int max_group = 1;
+    int flag = 0;
+    for (int k = 0; k < n; k++)
+        if (empty[i][k] && empty[j][k])
+            flag = 1;
 
-    do
+    if (flag)
     {
-        changed = 0;
-        for (int i = 0; i < n_states; i++)
-            new_partitions[i] = partitions[i];
-
-        for (int g = 0; g <= max_group; g++)
+        for (int k = 0; k < n; k++)
         {
-
-            int states_in_group[MAX_STATES], count = 0;
-            for (int i = 0; i < n_states; i++)
+            if (empty[j][k])
             {
-                if (partitions[i] == g)
-                    states_in_group[count++] = i;
+                empty[i][k] = 1;
+                empty[j][k] = 0;
             }
-
-            for (int i = 0; i < count; i++)
-            {
-                for (int j = i + 1; j < count; j++)
-                {
-                    int s1 = states_in_group[i];
-                    int s2 = states_in_group[j];
-
-                    if (are_distinguishable(s1, s2))
-                    {
-
-                        max_group++;
-                        new_partitions[s2] = max_group;
-
-                        for (int k = j + 1; k < count; k++)
-                        {
-                            int s3 = states_in_group[k];
-                            if (!are_distinguishable(s2, s3))
-                            {
-                                new_partitions[s3] = max_group;
-                            }
-                        }
-                        changed = 1;
-                        break;
-                    }
-                }
-                if (changed)
-                    break;
-            }
-            if (changed)
-                break;
-        }
-
-        memcpy(partitions, new_partitions, sizeof(partitions));
-    } while (changed);
-}
-
-void build_minimized_dfa()
-{
-    num_groups = 0;
-    memset(group_size, 0, sizeof(group_size));
-
-    for (int i = 0; i < MAX_STATES; i++)
-        for (int j = 0; j < MAX_STATES; j++)
-            group[i][j] = -1;
-
-    for (int i = 0; i < n_states; i++)
-    {
-        int g = partitions[i];
-        int found = -1;
-        for (int j = 0; j < num_groups; j++)
-        {
-            if (group[j][0] != -1 && partitions[group[j][0]] == g)
-            {
-                group[j][group_size[j]++] = i;
-                found = j;
-                break;
-            }
-        }
-        if (found == -1)
-        {
-            group[num_groups][group_size[num_groups]++] = i;
-            num_groups++;
-        }
-    }
-
-    for (int i = 0; i < num_groups; i++)
-    {
-        int rep = group[i][0];
-        for (int j = 0; j < n_symbols; j++)
-        {
-            int t = dfa[rep][j];
-            minimizedDFA[i][j] = -1;
-            for (int k = 0; k < num_groups; k++)
-            {
-                for (int l = 0; l < group_size[k]; l++)
-                {
-                    if (group[k][l] == t)
-                    {
-                        minimizedDFA[i][j] = k;
-                        break;
-                    }
-                }
-                if (minimizedDFA[i][j] != -1)
-                    break;
-            }
-        }
-    }
-}
-
-void print_minimized_dfa()
-{
-    printf("\nMinimized DFA Transition Table:\n");
-    for (int i = 0; i < num_groups; i++)
-    {
-        printf("State %d [", i);
-        for (int j = 0; j < group_size[i]; j++)
-            printf("q%d ", group[i][j]);
-        printf("]:\n");
-
-        for (int j = 0; j < n_symbols; j++)
-        {
-            printf("  On '%c' -> State %d\n", symbols[j], minimizedDFA[i][j]);
         }
     }
 }
 
 int main()
 {
-    printf("Enter number of states in DFA: ");
-    scanf("%d", &n_states);
+    int n, a, from, to, index;
+    char s1, s2, symbol;
 
-    printf("Enter number of input symbols: ");
-    scanf("%d", &n_symbols);
+    printf("Enter number of states: ");
+    scanf("%d", &n);
 
-    printf("Enter input symbols:\n");
-    for (int i = 0; i < n_symbols; i++)
+    char states[n];
+    printf("Enter state names (e.g., ABC): ");
+    scanf("%s", states);
+
+    printf("Enter size of alphabet: ");
+    scanf("%d", &a);
+
+    char alphabet[a];
+    printf("Enter alphabet characters (e.g., ab): ");
+    scanf("%s", alphabet);
+
+    int transition[n][a];
+    int table[n][n];
+    reset(n, table);
+
+    int f;
+    printf("Enter number of final states: ");
+    scanf("%d", &f);
+
+    char finalStates[f];
+    int finalIndexes[f];
+    printf("Enter final state names (e.g., B C): ");
+    for (int i = 0; i < f; i++)
     {
-        printf("Symbol %d: ", i + 1);
-        scanf(" %c", &symbols[i]);
+        scanf(" %c", &finalStates[i]);
+        finalIndexes[i] = findStateIndex(finalStates[i], n, states);
     }
 
-    printf("\nEnter transition table (destination state for each input):\n");
-    for (int i = 0; i < n_states; i++)
+    int t;
+    printf("Enter number of transitions: ");
+    scanf("%d", &t);
+
+    printf("Enter transitions (format: A a B):\n");
+    for (int i = 0; i < t; i++)
     {
-        for (int j = 0; j < n_symbols; j++)
+        scanf(" %c %c %c", &s1, &symbol, &s2);
+        from = findStateIndex(s1, n, states);
+        to = findStateIndex(s2, n, states);
+        index = findalpha(symbol, a, alphabet);
+        transition[from][index] = to;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < i; j++)
         {
-            printf("From q%d on '%c': ", i, symbols[j]);
-            scanf("%d", &dfa[i][j]);
+            if ((isFinal(i, f, finalIndexes) && !isFinal(j, f, finalIndexes)) ||
+                (isFinal(j, f, finalIndexes) && !isFinal(i, f, finalIndexes)))
+            {
+                table[i][j] = 1;
+            }
         }
     }
 
-    printf("Enter number of final states: ");
-    scanf("%d", &n_final);
+    printf("\nAfter marking initial distinguishable pairs:\n");
+    printTable(n, table);
 
-    printf("Enter final state numbers: ");
-    for (int i = 0; i < n_final; i++)
+    int out1, out2, changed = 1;
+    while (changed)
     {
-        scanf("%d", &final_states[i]);
+        changed = 0;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (table[i][j])
+                    continue;
+                for (int k = 0; k < a; k++)
+                {
+                    out1 = transition[i][k];
+                    out2 = transition[j][k];
+                    if (table[out1][out2] || table[out2][out1])
+                    {
+                        table[i][j] = 1;
+                        changed = 1;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    initialize_partitions();
-    refine_partitions();
-    build_minimized_dfa();
-    print_minimized_dfa();
+    printf("\nFinal Myhill-Nerode Table:\n");
+    printTable(n, table);
+
+    int groups[n][n];
+    int flags[n];
+    for (int i = 0; i < n; i++)
+    {
+        flags[i] = 0;
+        for (int j = 0; j < n; j++)
+        {
+            groups[i][j] = 0;
+        }
+    }
+    int g = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if (table[i][j] == 0)
+            {
+                int found = 0;
+                for (int m = 0; m < g; m++)
+                {
+                    if (groups[m][i] || groups[m][j])
+                    {
+                        groups[m][i] = 1;
+                        groups[m][j] = 1;
+                        found = 1;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    groups[g][i] = 1;
+                    groups[g][j] = 1;
+                    g++;
+                }
+                flags[i] = 1;
+                flags[j] = 1;
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (i != j)
+            {
+                merge(n, groups, i, j);
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        if (flags[i] == 0)
+        {
+            groups[g][i] = 1;
+            g++;
+        }
+    }
+
+    printf("\nMinimized DFA Transitions:\n");
+    for (int i = 0; i < n; i++)
+    {
+        int j;
+        for (j = 0; j < n && groups[i][j] == 0; j++)
+            ;
+        if (j == n)
+            continue;
+
+        printf("{");
+        int first = 1;
+        for (int k = 0; k < n; k++)
+        {
+            if (groups[i][k])
+            {
+                if (!first)
+                    printf(",");
+                printf("%c", states[k]);
+                first = 0;
+            }
+        }
+        printf("}");
+
+        for (int b = 0; b < a; b++)
+        {
+            printf(" -%c-> ", alphabet[b]);
+            int to_state = transition[j][b];
+
+            for (int y = 0; y < n; y++)
+            {
+                if (groups[y][to_state])
+                {
+                    printf("{");
+                    int first2 = 1;
+                    for (int k = 0; k < n; k++)
+                    {
+                        if (groups[y][k])
+                        {
+                            if (!first2)
+                                printf(",");
+                            printf("%c", states[k]);
+                            first2 = 0;
+                        }
+                    }
+                    printf("}\n");
+                    break;
+                }
+            }
+        }
+    }
 
     return 0;
 }

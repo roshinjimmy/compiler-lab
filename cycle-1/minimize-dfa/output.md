@@ -1,28 +1,42 @@
-Enter number of states in DFA: 4
-Enter number of input symbols: 2
-Enter input symbols:
-Symbol 1: a
-Symbol 2: b
-
-Enter transition table (destination state for each input):
-From q0 on 'a': 1
-From q0 on 'b': 2
-From q1 on 'a': 1
-From q1 on 'b': 3
-From q2 on 'a': 1
-From q2 on 'b': 3
-From q3 on 'a': 3
-From q3 on 'b': 3
+Enter number of states: 5
+Enter state names (e.g., ABC): ABCDE
+Enter size of alphabet: 2
+Enter alphabet characters (e.g., ab): 01
 Enter number of final states: 1
-Enter final state numbers: 3
+Enter final state names (e.g., B C): E
+Enter number of transitions: 10
+Enter transitions (format: A a B):
+A 0 B
+A 1 C
+B 0 B
+B 1 D
+C 0 B
+C 1 C
+D 0 B
+D 1 E
+E 0 B
+E 1 C
 
-Minimized DFA Transition Table:
-State 0 [q0 ]:
-  On 'a' -> State 1
-  On 'b' -> State 1
-State 1 [q1 q2 ]:
-  On 'a' -> State 1
-  On 'b' -> State 2
-State 2 [q3 ]:
-  On 'a' -> State 2
-  On 'b' -> State 2
+After marking initial distinguishable pairs:
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+1 1 1 1 0 
+
+Final Myhill-Nerode Table:
+0 0 0 0 0 
+1 0 0 0 0 
+0 1 0 0 0 
+1 1 1 0 0 
+1 1 1 1 0 
+
+Minimized DFA Transitions:
+{A,C} -0-> {B}
+ -1-> {A,C}
+{B} -0-> {B}
+ -1-> {D}
+{D} -0-> {B}
+ -1-> {E}
+{E} -0-> {B}
+ -1-> {A,C}
