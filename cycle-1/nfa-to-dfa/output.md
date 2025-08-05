@@ -1,30 +1,20 @@
-Enter number of NFA states: 3
-Enter number of input symbols: 2
-Enter input symbols:
-Symbol 1: a
-Symbol 2: b
-
-Enter NFA transitions:
-From q0 on 'a', number of transitions: 1
-  Enter destination state: 1
-From q0 on 'b', number of transitions: 0
-From q1 on 'a', number of transitions: 0
-From q1 on 'b', number of transitions: 1
-  Enter destination state: 2
-From q2 on 'a', number of transitions: 0
-From q2 on 'b', number of transitions: 1
-  Enter destination state: 2
+Enter number of alphabets: 2
+Enter the alphabets (e for epsilon, should be last):
+a b 
+Enter number of states: 3
+Enter number of transitions: 5
+Enter transitions (from symbol to):
+0 a 2
+0 a 1
+2 a 2
+2 b 2
+2 a 1
+Enter the start state: 0
+Enter number of final states: 1
+Enter final states: 1
 
 DFA Transition Table:
-DFA State 0 [q0 ]:
-  On 'a' -> DFA State 1
-  On 'b' -> DFA State 2
-DFA State 1 [q1 ]:
-  On 'a' -> DFA State 2
-  On 'b' -> DFA State 3
-DFA State 2 []:
-  On 'a' -> DFA State 2
-  On 'b' -> DFA State 2
-DFA State 3 [q2 ]:
-  On 'a' -> DFA State 2
-  On 'b' -> DFA State 3
+---------------------
+        a
+{q0}    {q1 q2}
+{q1 q2} {q1 q2}

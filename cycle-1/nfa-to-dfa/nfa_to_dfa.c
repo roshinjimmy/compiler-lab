@@ -4,22 +4,87 @@
 
 #define MAX 20
 
-int nfa[MAX][MAX];
-int dfa[100][MAX];
-int n_states, n_symbols;
-char symbols[MAX];
+char tran[MAX][MAX][MAX];
 
-int dfa_states[100][MAX];
-int dfa_state_count = 0;
+int eclosure[MAX][MAX];
+int closurecount[MAX];
 
-int stateExists(int stateSet[])
+int dfastate[MAX][MAX];
+int dfastatecount[MAX];
+
+char input[MAX];
+int n_alpha, n_state, n_trans, start, n_final;
+int final[MAX];
+
+int dfa[MAX][MAX];
+int dfa_state_total = 0;
+
+int is_final_state(int state)
 {
-    for (int i = 0; i < dfa_state_count; i++)
+    for (int i = 0; i < n_final; i++)
     {
-        int match = 1;
-        for (int j = 0; j < n_states; j++)
+        if (final[i] == state)
+            return 1;
+    }
+    return 0;
+}
+
+int find_alpha_index(char ch)
+{
+    for (int i = 0; i < n_alpha; i++)
+    {
+        if (input[i] == ch)
+            return i;
+    }
+    return -1;
+}
+
+void add_transition(int from, int to, char symbol)
+{
+    if (strchr(tran[from][to], symbol) == NULL)
+    {
+        int len = strlen(tran[from][to]);
+        tran[from][to][len] = symbol;
+        tran[from][to][len + 1] = '\0';
+    }
+}
+
+void compute_eclosure()
+{
+    for (int i = 0; i < n_state; i++)
+    {
+        int visited[MAX] = {0}, stack[MAX], top = -1;
+        eclosure[i][0] = i;
+        closurecount[i] = 1;
+        visited[i] = 1;
+        stack[++top] = i;
+
+        while (top >= 0)
         {
-            if (dfa_states[i][j] != stateSet[j])
+            int curr = stack[top--];
+            for (int j = 0; j < n_state; j++)
+            {
+                if (strchr(tran[curr][j], 'e') && !visited[j])
+                {
+                    eclosure[i][closurecount[i]++] = j;
+                    visited[j] = 1;
+                    stack[++top] = j;
+                }
+            }
+        }
+    }
+}
+
+int get_dfa_state_index(int state_list[], int count)
+{
+    for (int i = 0; i < dfa_state_total; i++)
+    {
+        if (dfastatecount[i] != count)
+            continue;
+        int match = 1;
+        for (int j = 0; j < count; j++)
+        {
+            if (dfastate[i][j] != state_list[j])
             {
                 match = 0;
                 break;
@@ -31,128 +96,169 @@ int stateExists(int stateSet[])
     return -1;
 }
 
-void addDFAState(int stateSet[], int fromState, int symbolIndex)
+void sort_state_list(int list[], int count)
 {
-    int existing = stateExists(stateSet);
-    if (existing == -1)
-    {
-        for (int i = 0; i < n_states; i++)
-            dfa_states[dfa_state_count][i] = stateSet[i];
-
-        dfa[fromState][symbolIndex] = dfa_state_count;
-        dfa_state_count++;
-    }
-    else
-    {
-        dfa[fromState][symbolIndex] = existing;
-    }
+    for (int i = 0; i < count - 1; i++)
+        for (int j = i + 1; j < count; j++)
+            if (list[i] > list[j])
+            {
+                int t = list[i];
+                list[i] = list[j];
+                list[j] = t;
+            }
 }
 
-void computeDFA()
+void subset_construction()
 {
-    int queue[100], front = 0, rear = 0;
-    int used[100] = {0};
+    int queue[MAX][MAX], front = 0, rear = 0;
+    int initial[MAX], init_count = 0;
+    int queuecount[MAX] = {0};
 
-    queue[rear++] = 0;
-    used[0] = 1;
+    for (int i = 0; i < closurecount[start]; i++)
+        initial[i] = eclosure[start][i];
+    init_count = closurecount[start];
+    sort_state_list(initial, init_count);
+
+    memcpy(dfastate[0], initial, sizeof(int) * init_count);
+    dfastatecount[0] = init_count;
+    dfa_state_total = 1;
+
+    memcpy(queue[rear], initial, sizeof(int) * init_count);
+    queuecount[rear] = init_count;
+    rear++;
 
     while (front < rear)
     {
-        int current = queue[front++];
+        int *curr = queue[front];
+        int currcount = queuecount[front];
+        int curr_index = get_dfa_state_index(curr, currcount);
+        front++;
 
-        for (int sym = 0; sym < n_symbols; sym++)
+        for (int a = 0; a < n_alpha - 1; a++)
         {
-            int newSet[MAX] = {0};
-
-            for (int s = 0; s < n_states; s++)
+            int move[MAX], move_count = 0;
+            for (int i = 0; i < currcount; i++)
             {
-                if (dfa_states[current][s])
+                int state = curr[i];
+                for (int j = 0; j < n_state; j++)
                 {
-                    for (int t = 0; t < n_states; t++)
+                    if (strchr(tran[state][j], input[a]))
                     {
-                        if (nfa[s * n_symbols + sym][t])
+                        for (int k = 0; k < closurecount[j]; k++)
                         {
-                            newSet[t] = 1;
+                            int s = eclosure[j][k];
+                            int exists = 0;
+                            for (int m = 0; m < move_count; m++)
+                            {
+                                if (move[m] == s)
+                                {
+                                    exists = 1;
+                                    break;
+                                }
+                            }
+                            if (!exists)
+                                move[move_count++] = s;
                         }
                     }
                 }
             }
 
-            if (stateExists(newSet) == -1)
+            sort_state_list(move, move_count);
+            int idx = get_dfa_state_index(move, move_count);
+            if (idx == -1 && move_count > 0)
             {
-                addDFAState(newSet, current, sym);
-                queue[rear++] = dfa_state_count - 1;
-                used[dfa_state_count - 1] = 1;
+                memcpy(dfastate[dfa_state_total], move, sizeof(int) * move_count);
+                dfastatecount[dfa_state_total] = move_count;
+                memcpy(queue[rear], move, sizeof(int) * move_count);
+                queuecount[rear] = move_count;
+                idx = dfa_state_total;
+                dfa_state_total++;
+                rear++;
             }
-            else
-            {
-                int existing = stateExists(newSet);
-                dfa[current][sym] = existing;
-            }
+
+            dfa[curr_index][a] = idx;
         }
     }
 }
 
-void printDFA()
+void print_dfa()
 {
     printf("\nDFA Transition Table:\n");
-    for (int i = 0; i < dfa_state_count; i++)
-    {
-        printf("DFA State %d [", i);
-        for (int j = 0; j < n_states; j++)
-        {
-            if (dfa_states[i][j])
-                printf("q%d ", j);
-        }
-        printf("]:\n");
+    printf("---------------------\n\t");
+    for (int i = 0; i < n_alpha - 1; i++)
+        printf("%c\t", input[i]);
+    printf("\n");
 
-        for (int sym = 0; sym < n_symbols; sym++)
+    for (int i = 0; i < dfa_state_total; i++)
+    {
+        printf("{");
+        for (int j = 0; j < dfastatecount[i]; j++)
         {
-            printf("  On '%c' -> DFA State %d\n", symbols[sym], dfa[i][sym]);
+            printf("q%d", dfastate[i][j]);
+            if (j != dfastatecount[i] - 1)
+                printf(" ");
         }
+        printf("}\t");
+        for (int k = 0; k < n_alpha - 1; k++)
+        {
+            int to = dfa[i][k];
+            if (to == -1)
+                printf("-\t");
+            else
+            {
+                printf("{");
+                for (int j = 0; j < dfastatecount[to]; j++)
+                {
+                    printf("q%d", dfastate[to][j]);
+                    if (j != dfastatecount[to] - 1)
+                        printf(" ");
+                }
+                printf("}\t");
+            }
+        }
+        printf("\n");
     }
 }
 
 int main()
 {
-    printf("Enter number of NFA states: ");
-    scanf("%d", &n_states);
+    memset(tran, 0, sizeof(tran));
+    memset(dfa, -1, sizeof(dfa));
 
-    printf("Enter number of input symbols: ");
-    scanf("%d", &n_symbols);
-
-    printf("Enter input symbols:\n");
-    for (int i = 0; i < n_symbols; i++)
+    printf("Enter number of alphabets: ");
+    scanf("%d", &n_alpha);
+    getchar();
+    printf("Enter the alphabets (e for epsilon, should be last):\n");
+    for (int i = 0; i < n_alpha; i++)
     {
-        printf("Symbol %d: ", i + 1);
-        scanf(" %c", &symbols[i]);
+        scanf("%c", &input[i]);
+        getchar();
     }
 
-    memset(nfa, 0, sizeof(nfa));
-
-    printf("\nEnter NFA transitions:\n");
-    for (int i = 0; i < n_states; i++)
+    printf("Enter number of states: ");
+    scanf("%d", &n_state);
+    printf("Enter number of transitions: ");
+    scanf("%d", &n_trans);
+    printf("Enter transitions (from symbol to):\n");
+    for (int i = 0; i < n_trans; i++)
     {
-        for (int j = 0; j < n_symbols; j++)
-        {
-            int count, state;
-            printf("From q%d on '%c', number of transitions: ", i, symbols[j]);
-            scanf("%d", &count);
-            for (int k = 0; k < count; k++)
-            {
-                printf("  Enter destination state: ");
-                scanf("%d", &state);
-                nfa[i * n_symbols + j][state] = 1;
-            }
-        }
+        int from, to;
+        char ch;
+        scanf("%d %c %d", &from, &ch, &to);
+        add_transition(from, to, ch);
     }
 
-    memset(dfa_states, 0, sizeof(dfa_states));
-    dfa_states[0][0] = 1;
-    dfa_state_count = 1;
+    printf("Enter the start state: ");
+    scanf("%d", &start);
+    printf("Enter number of final states: ");
+    scanf("%d", &n_final);
+    printf("Enter final states: ");
+    for (int i = 0; i < n_final; i++)
+        scanf("%d", &final[i]);
 
-    computeDFA();
-    printDFA();
+    compute_eclosure();
+    subset_construction();
+    print_dfa();
 
     return 0;
 }
