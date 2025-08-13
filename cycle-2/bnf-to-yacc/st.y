@@ -1,105 +1,175 @@
 %{
-    #include <bits/stdc++.h>
-    using namespace std;
 
-    void yyerror(const char *s);
-    int yylex();
+        #include<bits/stdc++.h>
 
-    typedef struct node {
-        struct node *left, *right;
-        string val;
-        int label;
-    } NODE;
+        using namespace std;
 
-    NODE* makeNode(string val, NODE* left, NODE* right) {
-        NODE *temp = new NODE();
-        temp->val = val;
-        temp->left = left;
-        temp->right = right;
-        temp->label = 0;
-        return temp;
-    }
+        void yyerror(char *s);
 
-    NODE* synTree;
+        int yylex();
+
+        typedef struct node
+
+        {
+
+                struct node *left,*right;
+
+                string val;
+
+                int label;
+
+        }NODE;
+
+        NODE* makeNode(string val, NODE* left , NODE* right)
+
+        {
+
+                NODE *temp=new NODE();
+
+                temp->val=val;
+
+                temp->left=left;
+
+                temp->right=right;
+
+                temp->label=0;
+
+                return temp;
+
+        }
+
+        NODE* synTree;
+
 %}
 
-%union {
-    char *str;
-    struct node *node;
+%token PL MI MUL DIV OP CL EQ ID VAL SC UNR POW
+
+%union{
+
+        typedef struct node NODE;
+
+        char *str;
+
+        NODE *node;
+
 }
 
-%token <str> PL MI MUL DIV OP CL EQ ID VAL SC UNR POW
 %type <node> s e t f g
 
-%left PL MI
-%left MUL DIV
-%right POW
+%type <str> PL MI MUL DIV OP CL EQ ID VAL SC UNR POW
 
 %%
 
-s : e { synTree = $1; }
-  ;
+s : e {$$=$1;synTree=$$;}
 
-e : e PL t { $$ = makeNode($2, $1, $3); }
-  | e MI t { $$ = makeNode($2, $1, $3); }
-  | t      { $$ = $1; }
-  ;
+e : e PL t {$$=makeNode($2,$1,$3);} |
 
-t : t MUL f { $$ = makeNode($2, $1, $3); }
-  | t DIV f { $$ = makeNode($2, $1, $3); }
-  | f       { $$ = $1; }
-  ;
+         e MI t {$$=makeNode($2,$1,$3);} |
 
-f : g POW f { $$ = makeNode($2, $1, $3); }
-  | g       { $$ = $1; }
-  ;
+          t {$$=$1;};
 
-g : OP e CL       { $$ = $2; }
-  | ID            { $$ = makeNode($1, NULL, NULL); }
-  | VAL           { $$ = makeNode($1, NULL, NULL); }
-  ;
+t : t MUL f {$$=makeNode($2,$1,$3);}|
+
+         t DIV f {$$=makeNode($2,$1,$3);}|
+
+          f {$$=$1;};
+
+f : g POW f {$$=makeNode($2,$1,$3);} |
+
+         g {$$=$1;};
+
+g : OP e CL {$$=$2;} |
+
+         ID{$$=makeNode($1,NULL,NULL);} |
+
+          VAL{$$=makeNode($1,NULL,NULL);} /*|
+
+           MI g{$$=makeNode($1,NULL,$2);} */;
 
 %%
 
-void inOrder(NODE* root) {
-    if (root) {
-        inOrder(root->left);
-        cout << root->val << " ";
-        inOrder(root->right);
-    }
+void inOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                inOrder(root->left);
+
+                cout<<root->val<<" ";
+
+                inOrder(root->right);
+
+        }
+
 }
 
-void postOrder(NODE* root) {
-    if (root) {
-        postOrder(root->left);
-        postOrder(root->right);
-        cout << root->val << " ";
-    }
+void postOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                postOrder(root->left);
+
+                postOrder(root->right);
+
+                cout<<root->val<<" ";
+
+        }
+
 }
 
-void preOrder(NODE* root) {
-    if (root) {
-        cout << root->val << " ";
-        preOrder(root->left);
-        preOrder(root->right);
-    }
+
+
+void preOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                cout<<root->val<<" ";
+
+                preOrder(root->left);
+
+                preOrder(root->right);
+
+        }
+
 }
 
-void yyerror(const char *s) {
-    cout << "Error: " << s << endl;
+void yyerror(char *s)
+
+{
+
+printf("%s\n",s);
+
 }
 
-int main() {
-    cout << "Enter expression:\n";
-    yyparse();
+int main(void)
 
-    cout << "In Order:\n";
-    inOrder(synTree);
-    cout << "\nPre Order:\n";
-    preOrder(synTree);
-    cout << "\nPost Order:\n";
-    postOrder(synTree);
-    cout << endl;
+{
 
-    return 0;
+        yyparse();
+
+        cout<<"In Order:"<<endl;
+
+        inOrder(synTree);
+
+        cout<<endl<<"Pre Order:"<<endl;
+
+        preOrder(synTree);
+
+        cout<<endl<<"Post Order:"<<endl;
+
+        postOrder(synTree);
+
+        cout<<endl;
+
 }

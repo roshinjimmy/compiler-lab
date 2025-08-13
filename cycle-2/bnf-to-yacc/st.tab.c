@@ -69,30 +69,49 @@
 /* First part of user prologue.  */
 #line 1 "st.y"
 
-    #include <bits/stdc++.h>
-    using namespace std;
 
-    void yyerror(const char *s);
-    int yylex();
+        #include<bits/stdc++.h>
 
-    typedef struct node {
-        struct node *left, *right;
-        string val;
-        int label;
-    } NODE;
+        using namespace std;
 
-    NODE* makeNode(string val, NODE* left, NODE* right) {
-        NODE *temp = new NODE();
-        temp->val = val;
-        temp->left = left;
-        temp->right = right;
-        temp->label = 0;
-        return temp;
-    }
+        void yyerror(char *s);
 
-    NODE* synTree;
+        int yylex();
 
-#line 96 "st.tab.c"
+        typedef struct node
+
+        {
+
+                struct node *left,*right;
+
+                string val;
+
+                int label;
+
+        }NODE;
+
+        NODE* makeNode(string val, NODE* left , NODE* right)
+
+        {
+
+                NODE *temp=new NODE();
+
+                temp->val=val;
+
+                temp->left=left;
+
+                temp->right=right;
+
+                temp->label=0;
+
+                return temp;
+
+        }
+
+        NODE* synTree;
+
+
+#line 115 "st.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -527,8 +546,8 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    40,    40,    43,    44,    45,    48,    49,    50,    53,
-      54,    57,    58,    59
+       0,    63,    63,    65,    67,    69,    71,    73,    75,    77,
+      79,    81,    83,    85
 };
 #endif
 
@@ -1096,79 +1115,79 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* s: e  */
-#line 40 "st.y"
-      { synTree = (yyvsp[0].node); }
-#line 1102 "st.tab.c"
+#line 63 "st.y"
+      {(yyval.node)=(yyvsp[0].node);synTree=(yyval.node);}
+#line 1121 "st.tab.c"
     break;
 
   case 3: /* e: e PL t  */
-#line 43 "st.y"
-           { (yyval.node) = makeNode((yyvsp[-1].str), (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1108 "st.tab.c"
+#line 65 "st.y"
+           {(yyval.node)=makeNode((yyvsp[-1].str),(yyvsp[-2].node),(yyvsp[0].node));}
+#line 1127 "st.tab.c"
     break;
 
   case 4: /* e: e MI t  */
-#line 44 "st.y"
-           { (yyval.node) = makeNode((yyvsp[-1].str), (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1114 "st.tab.c"
+#line 67 "st.y"
+                {(yyval.node)=makeNode((yyvsp[-1].str),(yyvsp[-2].node),(yyvsp[0].node));}
+#line 1133 "st.tab.c"
     break;
 
   case 5: /* e: t  */
-#line 45 "st.y"
-           { (yyval.node) = (yyvsp[0].node); }
-#line 1120 "st.tab.c"
+#line 69 "st.y"
+            {(yyval.node)=(yyvsp[0].node);}
+#line 1139 "st.tab.c"
     break;
 
   case 6: /* t: t MUL f  */
-#line 48 "st.y"
-            { (yyval.node) = makeNode((yyvsp[-1].str), (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1126 "st.tab.c"
+#line 71 "st.y"
+            {(yyval.node)=makeNode((yyvsp[-1].str),(yyvsp[-2].node),(yyvsp[0].node));}
+#line 1145 "st.tab.c"
     break;
 
   case 7: /* t: t DIV f  */
-#line 49 "st.y"
-            { (yyval.node) = makeNode((yyvsp[-1].str), (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1132 "st.tab.c"
+#line 73 "st.y"
+                 {(yyval.node)=makeNode((yyvsp[-1].str),(yyvsp[-2].node),(yyvsp[0].node));}
+#line 1151 "st.tab.c"
     break;
 
   case 8: /* t: f  */
-#line 50 "st.y"
-            { (yyval.node) = (yyvsp[0].node); }
-#line 1138 "st.tab.c"
+#line 75 "st.y"
+            {(yyval.node)=(yyvsp[0].node);}
+#line 1157 "st.tab.c"
     break;
 
   case 9: /* f: g POW f  */
-#line 53 "st.y"
-            { (yyval.node) = makeNode((yyvsp[-1].str), (yyvsp[-2].node), (yyvsp[0].node)); }
-#line 1144 "st.tab.c"
+#line 77 "st.y"
+            {(yyval.node)=makeNode((yyvsp[-1].str),(yyvsp[-2].node),(yyvsp[0].node));}
+#line 1163 "st.tab.c"
     break;
 
   case 10: /* f: g  */
-#line 54 "st.y"
-            { (yyval.node) = (yyvsp[0].node); }
-#line 1150 "st.tab.c"
+#line 79 "st.y"
+           {(yyval.node)=(yyvsp[0].node);}
+#line 1169 "st.tab.c"
     break;
 
   case 11: /* g: OP e CL  */
-#line 57 "st.y"
-                  { (yyval.node) = (yyvsp[-1].node); }
-#line 1156 "st.tab.c"
+#line 81 "st.y"
+            {(yyval.node)=(yyvsp[-1].node);}
+#line 1175 "st.tab.c"
     break;
 
   case 12: /* g: ID  */
-#line 58 "st.y"
-                  { (yyval.node) = makeNode((yyvsp[0].str), NULL, NULL); }
-#line 1162 "st.tab.c"
+#line 83 "st.y"
+           {(yyval.node)=makeNode((yyvsp[0].str),NULL,NULL);}
+#line 1181 "st.tab.c"
     break;
 
   case 13: /* g: VAL  */
-#line 59 "st.y"
-                  { (yyval.node) = makeNode((yyvsp[0].str), NULL, NULL); }
-#line 1168 "st.tab.c"
+#line 85 "st.y"
+             {(yyval.node)=makeNode((yyvsp[0].str),NULL,NULL);}
+#line 1187 "st.tab.c"
     break;
 
 
-#line 1172 "st.tab.c"
+#line 1191 "st.tab.c"
 
       default: break;
     }
@@ -1361,48 +1380,91 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 62 "st.y"
+#line 89 "st.y"
 
 
-void inOrder(NODE* root) {
-    if (root) {
-        inOrder(root->left);
-        cout << root->val << " ";
-        inOrder(root->right);
-    }
+void inOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                inOrder(root->left);
+
+                cout<<root->val<<" ";
+
+                inOrder(root->right);
+
+        }
+
 }
 
-void postOrder(NODE* root) {
-    if (root) {
-        postOrder(root->left);
-        postOrder(root->right);
-        cout << root->val << " ";
-    }
+void postOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                postOrder(root->left);
+
+                postOrder(root->right);
+
+                cout<<root->val<<" ";
+
+        }
+
 }
 
-void preOrder(NODE* root) {
-    if (root) {
-        cout << root->val << " ";
-        preOrder(root->left);
-        preOrder(root->right);
-    }
+
+
+void preOrder(NODE* root)
+
+{
+
+        if(root)
+
+        {
+
+                cout<<root->val<<" ";
+
+                preOrder(root->left);
+
+                preOrder(root->right);
+
+        }
+
 }
 
-void yyerror(const char *s) {
-    cout << "Error: " << s << endl;
+void yyerror(char *s)
+
+{
+
+printf("%s\n",s);
+
 }
 
-int main() {
-    cout << "Enter expression:\n";
-    yyparse();
+int main(void)
 
-    cout << "In Order:\n";
-    inOrder(synTree);
-    cout << "\nPre Order:\n";
-    preOrder(synTree);
-    cout << "\nPost Order:\n";
-    postOrder(synTree);
-    cout << endl;
+{
 
-    return 0;
+        yyparse();
+
+        cout<<"In Order:"<<endl;
+
+        inOrder(synTree);
+
+        cout<<endl<<"Pre Order:"<<endl;
+
+        preOrder(synTree);
+
+        cout<<endl<<"Post Order:"<<endl;
+
+        postOrder(synTree);
+
+        cout<<endl;
+
 }
