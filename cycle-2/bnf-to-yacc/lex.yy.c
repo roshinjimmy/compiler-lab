@@ -458,8 +458,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "st.lex"
-#line 2 "st.lex"
+#line 1 "st.l"
+#line 2 "st.l"
 
         #include <bits/stdc++.h>
 
@@ -683,7 +683,7 @@ YY_DECL
 		}
 
 	{
-#line 11 "st.lex"
+#line 11 "st.l"
 
 
 #line 690 "lex.yy.c"
@@ -745,73 +745,73 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 13 "st.lex"
+#line 13 "st.l"
 yylval.str=strdup(yytext);return ID ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 15 "st.lex"
+#line 15 "st.l"
 yylval.str=strdup(yytext);return VAL ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 17 "st.lex"
+#line 17 "st.l"
 yylval.str=strdup(yytext);return SC ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 19 "st.lex"
+#line 19 "st.l"
 yylval.str=strdup(yytext);return PL ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "st.lex"
+#line 21 "st.l"
 yylval.str=strdup(yytext);return MI ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "st.lex"
+#line 23 "st.l"
 yylval.str=strdup(yytext);return MUL ;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 25 "st.lex"
+#line 25 "st.l"
 yylval.str=strdup(yytext);return DIV ;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 27 "st.lex"
+#line 27 "st.l"
 yylval.str=strdup(yytext);return EQ ;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 29 "st.lex"
+#line 29 "st.l"
 yylval.str=strdup(yytext);return OP ;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "st.lex"
+#line 31 "st.l"
 yylval.str=strdup(yytext);return CL ;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 33 "st.lex"
+#line 33 "st.l"
 yylval.str=strdup(yytext);return POW ;
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 35 "st.lex"
+#line 35 "st.l"
 ;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 37 "st.lex"
+#line 37 "st.l"
 yylval.str=strdup(yytext);return UNR;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 39 "st.lex"
+#line 39 "st.l"
 ECHO;
 	YY_BREAK
 #line 818 "lex.yy.c"
@@ -1819,5 +1819,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 39 "st.lex"
+#line 39 "st.l"
 

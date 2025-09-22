@@ -75,7 +75,7 @@
 int yylex(void);
 int yyerror(const char *msg);
 
-#line 79 "y.tab.c"
+#line 79 "calc.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -98,67 +98,7 @@ int yyerror(const char *msg);
 #  endif
 # endif
 
-/* Use api.header.include to #include this header
-   instead of duplicating it here.  */
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
-/* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
-
-/* Token kinds.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    NUMBER = 258,                  /* NUMBER  */
-    PLUS = 259,                    /* PLUS  */
-    MINUS = 260,                   /* MINUS  */
-    MULT = 261,                    /* MULT  */
-    DIV = 262,                     /* DIV  */
-    LPAREN = 263,                  /* LPAREN  */
-    RPAREN = 264,                  /* RPAREN  */
-    EOL = 265                      /* EOL  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define NUMBER 258
-#define PLUS 259
-#define MINUS 260
-#define MULT 261
-#define DIV 262
-#define LPAREN 263
-#define RPAREN 264
-#define EOL 265
-
-/* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
-#endif
-
-
-extern YYSTYPE yylval;
-
-
-int yyparse (void);
-
-
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#include "calc.tab.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -1130,31 +1070,31 @@ yyreduce:
   case 3: /* calclist: calclist expr EOL  */
 #line 17 "calc.y"
                           { printf("= %d\n", yyvsp[-1]); }
-#line 1134 "y.tab.c"
+#line 1074 "calc.tab.c"
     break;
 
   case 4: /* expr: NUMBER  */
 #line 21 "calc.y"
                           { yyval = yyvsp[0]; }
-#line 1140 "y.tab.c"
+#line 1080 "calc.tab.c"
     break;
 
   case 5: /* expr: expr PLUS expr  */
 #line 22 "calc.y"
                           { yyval = yyvsp[-2] + yyvsp[0]; }
-#line 1146 "y.tab.c"
+#line 1086 "calc.tab.c"
     break;
 
   case 6: /* expr: expr MINUS expr  */
 #line 23 "calc.y"
                           { yyval = yyvsp[-2] - yyvsp[0]; }
-#line 1152 "y.tab.c"
+#line 1092 "calc.tab.c"
     break;
 
   case 7: /* expr: expr MULT expr  */
 #line 24 "calc.y"
                           { yyval = yyvsp[-2] * yyvsp[0]; }
-#line 1158 "y.tab.c"
+#line 1098 "calc.tab.c"
     break;
 
   case 8: /* expr: expr DIV expr  */
@@ -1166,17 +1106,17 @@ yyreduce:
                             }
                             yyval = yyvsp[-2] / yyvsp[0];
                           }
-#line 1170 "y.tab.c"
+#line 1110 "calc.tab.c"
     break;
 
   case 9: /* expr: LPAREN expr RPAREN  */
 #line 32 "calc.y"
                           { yyval = yyvsp[-1]; }
-#line 1176 "y.tab.c"
+#line 1116 "calc.tab.c"
     break;
 
 
-#line 1180 "y.tab.c"
+#line 1120 "calc.tab.c"
 
       default: break;
     }

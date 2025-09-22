@@ -445,7 +445,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "valid_var.l"
 #line 2 "valid_var.l"
-#include "y.tab.h"
+#include "valid_var.tab.h"
 #line 450 "lex.yy.c"
 #line 451 "lex.yy.c"
 

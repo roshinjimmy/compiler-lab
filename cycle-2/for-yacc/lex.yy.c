@@ -460,7 +460,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "for.l"
 #line 2 "for.l"
-#include "y.tab.h"
+#include "for.tab.h"
 #line 465 "lex.yy.c"
 #line 466 "lex.yy.c"
 

@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+#ifndef YY_YY_CALC_TAB_H_INCLUDED
+# define YY_YY_CALC_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -54,46 +54,17 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    FOR = 258,                     /* FOR  */
-    INT = 259,                     /* INT  */
-    LPAREN = 260,                  /* LPAREN  */
-    RPAREN = 261,                  /* RPAREN  */
-    SEMICOLON = 262,               /* SEMICOLON  */
-    ASSIGN = 263,                  /* ASSIGN  */
-    LT = 264,                      /* LT  */
-    LE = 265,                      /* LE  */
-    GT = 266,                      /* GT  */
-    GE = 267,                      /* GE  */
-    EQ = 268,                      /* EQ  */
-    NE = 269,                      /* NE  */
-    INC = 270,                     /* INC  */
-    DEC = 271,                     /* DEC  */
-    NUMBER = 272,                  /* NUMBER  */
-    ID = 273                       /* ID  */
+    NUMBER = 258,                  /* NUMBER  */
+    PLUS = 259,                    /* PLUS  */
+    MINUS = 260,                   /* MINUS  */
+    MULT = 261,                    /* MULT  */
+    DIV = 262,                     /* DIV  */
+    LPAREN = 263,                  /* LPAREN  */
+    RPAREN = 264,                  /* RPAREN  */
+    EOL = 265                      /* EOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define FOR 258
-#define INT 259
-#define LPAREN 260
-#define RPAREN 261
-#define SEMICOLON 262
-#define ASSIGN 263
-#define LT 264
-#define LE 265
-#define GT 266
-#define GE 267
-#define EQ 268
-#define NE 269
-#define INC 270
-#define DEC 271
-#define NUMBER 272
-#define ID 273
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -109,4 +80,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_CALC_TAB_H_INCLUDED  */

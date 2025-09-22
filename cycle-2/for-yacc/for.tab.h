@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+#ifndef YY_YY_FOR_TAB_H_INCLUDED
+# define YY_YY_FOR_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -54,18 +54,25 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    IDENTIFIER = 258,              /* IDENTIFIER  */
-    INVALID = 259                  /* INVALID  */
+    FOR = 258,                     /* FOR  */
+    INT = 259,                     /* INT  */
+    LPAREN = 260,                  /* LPAREN  */
+    RPAREN = 261,                  /* RPAREN  */
+    SEMICOLON = 262,               /* SEMICOLON  */
+    ASSIGN = 263,                  /* ASSIGN  */
+    LT = 264,                      /* LT  */
+    LE = 265,                      /* LE  */
+    GT = 266,                      /* GT  */
+    GE = 267,                      /* GE  */
+    EQ = 268,                      /* EQ  */
+    NE = 269,                      /* NE  */
+    INC = 270,                     /* INC  */
+    DEC = 271,                     /* DEC  */
+    NUMBER = 272,                  /* NUMBER  */
+    ID = 273                       /* ID  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define IDENTIFIER 258
-#define INVALID 259
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -81,4 +88,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_FOR_TAB_H_INCLUDED  */

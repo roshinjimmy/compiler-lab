@@ -17,7 +17,7 @@ input:
 %%
 
 int yyerror(const char *s) {
-    fprintf(stderr, "Parse error: %s\n", s);
+    printf("Invalid variable name\n");
     return 1;
 }
 
