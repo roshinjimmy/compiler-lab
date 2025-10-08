@@ -6,7 +6,7 @@ int yylex();
 void yyerror(const char *s);
 %}
 
-%token WHILE ID NUMBER RELOP
+%token WHILE ID NUMBER RELOP INC DEC
 
 %%
 stmt:
@@ -20,9 +20,20 @@ condition:
   ;
 
 stmt_body:
-    ID ';'
-  | '{' ID ';' '}'
-  ;
+      ID ';'
+    | ID INC ';'
+    | ID DEC ';'
+    | '{' body '}'
+    ;
+
+body:
+      ID ';'
+    | ID INC ';'
+    | ID DEC ';'
+    | body ID ';'
+    | body ID INC ';'
+    | body ID DEC ';'
+    ;
 %%
 
 void yyerror(const char *s) {
