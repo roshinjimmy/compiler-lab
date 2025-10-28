@@ -1,46 +1,49 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
-void gen_code_for_operator(char *inp, char operator, char *reg)
-{
-    int i = 0, j = 0;
+char reg = 'X';
+
+void generate_code(char *expr, char op) {
     char temp[100];
-    while (inp[i] != '\0')
-    {
-        if (inp[i] == operator)
-        {
-            char op1 = inp[i - 1];
-            char op2 = inp[i + 1];
-            printf("%c\t%c\t%c\t%c\n", operator, *reg, op1, op2);
-            temp[j - 1] = *reg; // Replace operand1 with result register
-            i += 2;             // Skip operator and operand2
-            (*reg)--;           // Move to next register
-        }
-        else
-        {
-            temp[j++] = inp[i++];
+    int i = 0, j = 0;
+    
+    while(expr[i] != '\0') {
+        if(expr[i] == op) {
+            // Extract operands
+            char op1 = expr[i-1];
+            char op2 = expr[i+1];
+            
+            // Generate three-address code
+            printf("%c\t%c\t%c\t%c\n", op, reg, op1, op2);
+            
+            // Replace the operation with result
+            temp[j-1] = reg;  // Overwrite op1 with result
+            reg++;            // Next temporary register
+            i += 2;           // Skip operator and op2
+        } else {
+            temp[j++] = expr[i++];
         }
     }
-    temp[j] = '\0'; // Proper null-termination
-    strcpy(inp, temp); // Update original string
+    temp[j] = '\0';
+    strcpy(expr, temp);
 }
 
-void gen_code(char *inp)
-{
-    char reg = 'Z'; // Temporary register starting from Z
-    gen_code_for_operator(inp, '/', &reg);
-    gen_code_for_operator(inp, '*', &reg);
-    gen_code_for_operator(inp, '+', &reg);
-    gen_code_for_operator(inp, '-', &reg);
-    gen_code_for_operator(inp, '=', &reg);
-}
-
-int main()
-{
-    char inp[100];
-    printf("Enter expression: ");
-    scanf("%s", inp);
-    printf("Oprtr\tDestn\tOp1\tOp2\n");
-    gen_code(inp);
+int main() {
+    char expr[100];
+    
+    printf("Enter expression (e.g., a=b+c*d): ");
+    scanf("%s", expr);
+    
+    printf("\nOperator\tDest\tOp1\tOp2\n");
+    printf("--------------------------------\n");
+    
+    // Generate code in precedence order
+    generate_code(expr, '/');
+    generate_code(expr, '*');
+    generate_code(expr, '+');
+    generate_code(expr, '-');
+    generate_code(expr, '=');
+    
     return 0;
 }
