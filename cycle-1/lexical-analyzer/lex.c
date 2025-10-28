@@ -18,12 +18,14 @@ int isKeyword(const char *word)
 
 int isOperator(char ch)
 {
-    return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=');
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' ||
+            ch == '<' || ch == '>' || ch == '!');
 }
 
 int isSymbol(char ch)
 {
-    return (ch == ';' || ch == ',' || ch == '(' || ch == ')' || ch == '{' || ch == '}');
+    return (ch == ';' || ch == ',' || ch == '(' || ch == ')' ||
+            ch == '{' || ch == '}' || ch == '[' || ch == ']');
 }
 
 void lexicalAnalyzer(FILE *fp)
@@ -41,13 +43,16 @@ void lexicalAnalyzer(FILE *fp)
         if (isalpha(ch) || ch == '_')
         {
             i = 0;
-            while (isalnum(ch) || ch == '_')
+            token[i++] = ch;
+            while ((ch = fgetc(fp)) != EOF && (isalnum(ch) || ch == '_'))
             {
-                token[i++] = ch;
-                ch = fgetc(fp);
+                if (i < 99)
+                    token[i++] = ch;
             }
             token[i] = '\0';
-            ungetc(ch, fp);
+            if (ch != EOF)
+                ungetc(ch, fp);
+
             if (isKeyword(token))
                 printf("Keyword: %s\n", token);
             else
@@ -57,13 +62,15 @@ void lexicalAnalyzer(FILE *fp)
         else if (isdigit(ch))
         {
             i = 0;
-            while (isdigit(ch))
+            token[i++] = ch;
+            while ((ch = fgetc(fp)) != EOF && isdigit(ch))
             {
-                token[i++] = ch;
-                ch = fgetc(fp);
+                if (i < 99)
+                    token[i++] = ch;
             }
             token[i] = '\0';
-            ungetc(ch, fp);
+            if (ch != EOF)
+                ungetc(ch, fp);
             printf("Number: %s\n", token);
         }
 
@@ -79,7 +86,7 @@ void lexicalAnalyzer(FILE *fp)
 
         else
         {
-            printf("Unknown character: %c\n", ch);
+            printf("Unknown: %c\n", ch);
         }
     }
 }
@@ -93,11 +100,12 @@ int main()
     FILE *fp = fopen(filename, "r");
     if (fp == NULL)
     {
-        perror("Error opening file");
+        printf("Error: Cannot open file %s\n", filename);
         return 1;
     }
 
-    printf("Lexical Analysis Output:\n\n");
+    printf("\nLexical Analysis Output:\n");
+    printf("------------------------\n");
     lexicalAnalyzer(fp);
 
     fclose(fp);
