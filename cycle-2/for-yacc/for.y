@@ -1,73 +1,37 @@
 %{
 #include <stdio.h>
-#include <stdlib.h>
-
 int yylex();
-void yyerror(const char *s);
+void yyerror(char *s) { printf("Invalid FOR statement\n"); }
 %}
 
-%token FOR INT LPAREN RPAREN SEMICOLON ASSIGN LT LE GT GE EQ NE INC DEC
-%token NUMBER ID
-
-%left LT LE GT GE EQ NE
-%right ASSIGN
-%left INC DEC
+%token FOR ID NUMBER
 
 %%
-stmt : FOR LPAREN init_opt SEMICOLON cond_opt SEMICOLON inc_opt RPAREN
-       { printf("Valid FOR statement syntax\n"); }
-     ;
+stmt: FOR '(' init ';' cond ';' inc ')' { printf("Valid FOR statement\n"); }
+    ;
 
-init_opt : /* empty */
-         | expr
-         | declaration
-         ;
+init: ID '=' NUMBER
+    | ID '=' ID  
+    | /* empty */
+    ;
 
-cond_opt : /* empty */
-         | expr
-         ;
+cond: ID '<' NUMBER
+    | ID '>' NUMBER
+    | ID '>' ID
+    | ID '<' ID
+    | ID '<' '=' NUMBER
+    | ID '>' '=' NUMBER
+    | /* empty */
+    ;
 
-inc_opt : /* empty */
-        | expr
-        ;
-
-declaration : INT ID ASSIGN NUMBER
-            | INT ID
-            ;
-
-expr : assignment
-     | comparison
-     | incdec
-     ;
-
-assignment : ID ASSIGN NUMBER
-           | ID ASSIGN ID
-           ;
-
-comparison : ID relop NUMBER
-           | ID relop ID
-           ;
-
-incdec : ID INC
-       | ID DEC
-       ;
-
-relop : LT
-      | LE
-      | GT
-      | GE
-      | EQ
-      | NE
-      ;
+inc: ID '+' '+'
+   | ID '-' '-'
+   | /* empty */
+   ;
 %%
 
 int main() {
-    printf("Enter a FOR statement:\n");
-    if (yyparse() == 0)
-        printf("Parsing completed successfully.\n");
+    printf("Enter FOR statement: ");
+    yyparse();
     return 0;
-}
-
-void yyerror(const char *s) {
-    printf("Error: %s\n", s);
 }
