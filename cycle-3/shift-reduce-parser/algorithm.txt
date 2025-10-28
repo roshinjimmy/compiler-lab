@@ -1,0 +1,59 @@
+Step 1: Read the number of grammar rules (n)
+Step 2: For each rule i from 0 to n-1:
+    Step 2.1: Read a production rule in format "X=YZ"
+    Step 2.2: Store lhs = first character (X)
+    Step 2.3: Store rhs = remaining characters after "=" (YZ)
+Step 3: Read the input string to parse
+Step 4: Initialize empty stack (t = -1)
+Step 5: Print table header: "Stack Input Action"
+Step 6: Set input pointer i = 0
+Step 7: While input[i] is not null character:
+    
+// SHIFT OPERATION
+Step 7.1: Print current stack, remaining input, and "SHIFT input[i]"
+Step 7.2: Push input[i] onto stack:
+    t = t + 1
+    stack[t] = input[i]
+    stack[t+1] = '\0'
+Step 7.3: Increment input pointer: i = i + 1
+
+// REDUCE OPERATIONS (as many as possible)
+Step 7.4: Set reduction_possible = true
+Step 7.5: While reduction_possible is true:
+    Step 7.5.1: Set reduction_possible = false
+    
+    Step 7.5.2: For each rule j from 0 to n-1:
+        Step 7.5.2.1: Let rhs_length = strlen(rule[j].rhs)
+        Step 7.5.2.2: If stack has at least rhs_length symbols (t+1 >= rhs_length):
+            Step 7.5.2.3: Extract top rhs_length symbols from stack
+            Step 7.5.2.4: If these symbols match rule[j].rhs:
+                // PERFORM REDUCTION
+                Step 7.5.2.5: Print current stack, input, and "REDUCE rule[j].rhs -> rule[j].lhs"
+                Step 7.5.2.6: Pop rhs_length-1 symbols from stack:
+                    t = t - (rhs_length - 1)
+                Step 7.5.2.7: Push rule[j].lhs onto stack:
+                    stack[t] = rule[j].lhs
+                    stack[t+1] = '\0'
+                Step 7.5.2.8: Set reduction_possible = true
+                Step 7.5.2.9: Break inner loop (restart reduction check)
+                Step 8: After input is consumed, perform final reductions:
+Step 8.1: Set reduction_possible = true
+Step 8.2: While reduction_possible:
+    Step 8.2.1: Set reduction_possible = false
+    Step 8.2.2: For each rule j from 0 to n-1:
+        Step 8.2.2.1: Let rhs_length = strlen(rule[j].rhs)
+        Step 8.2.2.2: If stack has at least rhs_length symbols:
+            Step 8.2.2.3: Extract top rhs_length symbols from stack
+            Step 8.2.2.4: If these symbols match rule[j].rhs:
+                Step 8.2.2.5: Print "REDUCE rule[j].rhs -> rule[j].lhs"
+                Step 8.2.2.6: Pop rhs_length-1 symbols: t = t - (rhs_length - 1)
+                Step 8.2.2.7: Push rule[j].lhs: stack[t] = rule[j].lhs
+                Step 8.2.2.8: Set reduction_possible = true
+                Step 8.2.2.9: Break inner loop
+
+Step 9: Check acceptance condition:
+    Step 9.1: If stack has exactly 1 symbol (t == 0) AND 
+              that symbol equals the start symbol (stack[0] == first_rule.lhs):
+        Step 9.2: Print "ACCEPTED"
+    Step 9.3: Else:
+        Step 9.4: Print "REJECTED"

@@ -1,74 +1,55 @@
 #include <stdio.h>
 #include <string.h>
 
-char stack[100], input[100];
-int top = -1;
+char s[100], in[100];
+int t = -1;
 
-// Grammar: S -> S+S | S-S | (S) | i
+struct R
+{
+    char l, r[10];
+} p[10];
 
-void print_state(int ip, char *action) {
-    for(int i=0; i<=top; i++) printf("%c", stack[i]);
-    printf("\t\t%s\t\t%s\n", input+ip, action);
-}
-
-int reduce() {
-    // S -> i
-    if(stack[top] == 'i') {
-        stack[top] = 'S';
-        return 1;
-    }
-    // S -> S+S
-    if(top >= 2 && stack[top] == 'S' && stack[top-1] == '+' && stack[top-2] == 'S') {
-        top -= 2;
-        stack[top] = 'S';
-        return 1;
-    }
-    // S -> S-S  
-    if(top >= 2 && stack[top] == 'S' && stack[top-1] == '-' && stack[top-2] == 'S') {
-        top -= 2;
-        stack[top] = 'S';
-        return 1;
-    }
-    // S -> (S)
-    if(top >= 2 && stack[top] == ')' && stack[top-1] == 'S' && stack[top-2] == '(') {
-        top -= 2;
-        stack[top] = 'S';
-        return 1;
+int red(int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        int len = strlen(p[i].r);
+        if (t + 1 >= len && strncmp(&s[t - len + 1], p[i].r, len) == 0)
+        {
+            printf("%s\t%s\tREDUCE %s->%c\n", s, in, p[i].r, p[i].l);
+            t -= len - 1;
+            s[t] = p[i].l;
+            s[t + 1] = '\0';
+            return 1;
+        }
     }
     return 0;
 }
 
-int main() {
-    printf("Enter expression: ");
-    scanf("%s", input);
-    
-    printf("\nStack\t\tInput\t\tAction\n");
-    printf("----------------------------------------\n");
-    
-    int ip = 0;  // input pointer
-    stack[++top] = '$';  // stack bottom
-    
-    // Process input until end
-    while(input[ip] != '\0') {
-        // Shift current input symbol
-        stack[++top] = input[ip++];
-        print_state(ip, "SHIFT");
-        
-        // Keep reducing as much as possible
-        while(reduce()) {
-            print_state(ip, "REDUCE");
-        }
+int main()
+{
+    int n;
+    printf("Rules: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+    {
+        char l[10];
+        scanf("%s", l);
+        p[i].l = l[0];
+        strcpy(p[i].r, l + 2);
     }
-    
-    // Final check: stack should be $S
-    if(top == 1 && stack[top] == 'S') {
-        printf("\nExpression Accepted!\n");
-    } else {
-        printf("\nExpression Rejected!\n");
-        printf("Final stack: ");
-        for(int i=0; i<=top; i++) printf("%c", stack[i]);
-        printf("\n");
+    printf("Input: ");
+    scanf("%s", in);
+
+    printf("\nStack\tInput\tAction\n");
+    for (int i = 0; in[i];)
+    {
+        printf("%s\t%s\tSHIFT %c\n", s, in + i, in[i]);
+        s[++t] = in[i++];
+        s[t + 1] = '\0';
+        while (red(n))
+            ;
     }
-    
+    printf(t == 0 && s[t] == p[0].l ? "ACCEPTED\n" : "REJECTED\n");
     return 0;
 }
