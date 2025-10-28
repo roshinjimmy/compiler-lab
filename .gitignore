@@ -16,3 +16,9 @@ Thumbs.db
 # Backup files
 *.bak
 *.tmp
+
+# Generated parser files (yacc/bison output)
+*.tab.c
+*.tab.h
+lex.yy.c 
+
